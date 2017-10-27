@@ -9,11 +9,22 @@ export class ProductosProvider {
     pagina: number = 0;
     productos: any[] = [];
     categorias: any[] = [];
+    por_categoria: any[] = [];
 
     constructor(public http: Http) {
         //console.log('Hello ProductosProvider Provider');
         this.cargar_todos();
         this.cargar_categorias();
+    }
+
+    cargar_por_categoria(categoria: string) {
+        let url = URL_PROVIDERS + "/productos/por_tipo/" + categoria;
+        this.http.get(url)
+            .map(resp => resp.json())
+            .subscribe(data => {
+                console.log(data.lineas);
+                this.por_categoria = data.lineas;
+            });
     }
 
     cargar_categorias() {

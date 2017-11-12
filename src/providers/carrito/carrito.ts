@@ -2,17 +2,45 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
-import { AlertController, Platform } from "ionic-angular";
+import { AlertController, Platform, ModalController } from "ionic-angular";
 
 import { Storage } from '@ionic/storage';
+
+import { UsuarioProvider } from './../usuario/usuario';
+
+//paginas del modal
+import { CarritoPage } from './../../pages/carrito/carrito';
+import { LoginPage } from './../../pages/login/login';
+
 
 @Injectable()
 export class CarritoProvider {
 
     items: any[] = [];
 
-    constructor(public http: Http, private alertCtrl: AlertController, private platform: Platform, private storage: Storage) {
+    constructor(public http: Http, private alertCtrl: AlertController, private platform: Platform, private storage: Storage, private _up: UsuarioProvider, private modalCtrl: ModalController) {
         this.cargar_storage();
+    }
+
+    ver_carrito() {
+
+        let modal: any;
+
+        if (this._up.token) {
+            //mostrar pagina del carrito
+            modal = this.modalCtrl.create(CarritoPage);
+        } else {
+            //mostrar el login
+            modal = this.modalCtrl.create(LoginPage);
+        }
+
+        modal.present();
+
+        modal.onDidDismiss((abrirCarrito: boolean) => {
+            if (abrirCarrito) {
+                this.modalCtrl.create(CarritoPage).present();
+            }
+        });
     }
 
     agregar_carrito(item_enviado: any) {
